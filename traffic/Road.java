@@ -5,21 +5,11 @@ package traffic;
  * @author Antonio Miguel B. Llamas, Romeo Manuel N. Pena
  */
 public class Road {
-    private String northBound;
-    private String southBound;
     private String roadName;
     private String northAdvisory;
     private String southAdvisory;
-    private String northStatus;
-    private String southStatus;
-
-    public void setNorthBound(String northBound) {
-        this.northBound = northBound;
-    }
-
-    public void setSouthBound(String southBound) {
-        this.southBound = southBound;
-    }
+    private String northCondition;
+    private String southCondition;
 
     public void setRoadName(String roadName) {
         this.roadName = roadName;
@@ -33,20 +23,12 @@ public class Road {
         this.southAdvisory = southAdvisory;
     }
 
-    public void setNorthStatus(String northStatus) {
-        this.northStatus = northStatus;
+    public void setNorthCondition(String northCondition) {
+        this.northCondition = northCondition;
     }
 
-    public void setSouthStatus(String southStatus) {
-        this.southStatus = southStatus;
-    }
-
-    public String getNorthBound() {
-        return northBound;
-    }
-
-    public String getSouthBound() {
-        return southBound;
+    public void setSouthCondition(String southCondition) {
+        this.southCondition = southCondition;
     }
 
     public String getRoadName() {
@@ -61,12 +43,12 @@ public class Road {
         return southAdvisory;
     }
 
-    public String getNorthStatus() {
-        return northStatus;
+    public String getNorthCondition() {
+        return northCondition;
     }
 
-    public String getSouthStatus() {
-        return southStatus;
+    public String getSouthCondition() {
+        return southCondition;
     }
     
     public Road(String name) {
