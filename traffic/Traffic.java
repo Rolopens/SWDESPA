@@ -11,17 +11,18 @@ public class Traffic {
         
         Scanner sc = new Scanner(System.in);
         int x;
-        int response;        
+        int response = 0;        
         
         Dashboard dashboard = new Dashboard();
         
         System.out.println("Welcome to DOTC Metro Cebu Navigator!");
             
-        while(true) {                
+        while(response != 5) {                
             System.out.println("[1] Add Mobile App");
             System.out.println("[2] Add Web App");
             System.out.println("[3] Update Northbound of a Road");
             System.out.println("[4] Update Southbound of a Road");
+            System.out.println("[5] Stop");
 
             response = sc.nextInt();
 
@@ -113,10 +114,15 @@ public class Traffic {
                 
                 dashboard.updateBoard((response2 - 1), response, response3, (response4 - 1));
             }
+            
+            else if(response == 5)
+                break;
 
             else {
                 System.out.println("Invalid input!");
             }
         }
+        
+        System.out.println("Exited program.");
     }   
 }

@@ -18,8 +18,21 @@ public class WebApp implements Observer {
         
         System.out.printf("%-25s %-25s %-25s %s", "", "NB", "SB", "\n");
         for(int i = 0; i < ((ArrayList<Road>)arg).size(); i++) {
-            String NB = (((ArrayList<Road>)arg).get(i).getNorthCondition() + " (" + ((ArrayList<Road>)arg).get(i).getNorthAdvisory() + "!)");
-            String SB = (((ArrayList<Road>)arg).get(i).getSouthCondition() + " (" + ((ArrayList<Road>)arg).get(i).getSouthAdvisory() + "!)");
+
+        String NB;
+        String SB;
+            
+            if(!(((ArrayList<Road>)arg).get(i).getNorthAdvisory()).equals("(n/a)"))            
+                NB = (((ArrayList<Road>)arg).get(i).getNorthCondition() + " (" + ((ArrayList<Road>)arg).get(i).getNorthAdvisory() + "!)");
+            else
+                NB = (((ArrayList<Road>)arg).get(i).getNorthCondition());
+            
+            if(!(((ArrayList<Road>)arg).get(i).getSouthAdvisory()).equals("(n/a)"))
+                SB = (((ArrayList<Road>)arg).get(i).getSouthCondition() + " (" + ((ArrayList<Road>)arg).get(i).getSouthAdvisory() + "!)");
+            else
+                SB = (((ArrayList<Road>)arg).get(i).getSouthCondition());
+
+
             System.out.printf("%-25s %-25s %-25s %s", ((ArrayList<Road>)arg).get(i).getRoadName(), NB, SB, "\n");        
         }
         System.out.println();
