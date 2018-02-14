@@ -15,6 +15,7 @@ public class Events {
     private int year;
     private String eventName;
     private String colorName;
+    private boolean isHoliday;
 
     public Events(int month, int date, int year, String eventName, String colorName) {
         this.month = month;
@@ -22,6 +23,7 @@ public class Events {
         this.year = year;
         this.eventName = eventName;
         this.colorName = colorName;
+        this.isHoliday = false;
     }
         
     public int getMonth() {
@@ -62,6 +64,14 @@ public class Events {
 
     public void setColorName(String colorName) {
         this.colorName = colorName;
+    }
+
+    public boolean isIsHoliday() {
+        return isHoliday;
+    }
+
+    public void setIsHoliday(boolean isHoliday) {
+        this.isHoliday = isHoliday;
     }
     
     
