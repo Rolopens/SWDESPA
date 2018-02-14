@@ -18,12 +18,14 @@ import java.util.logging.Logger;
  * @author Rolo
  */
 public class PSVParser extends DataParser{
-
+    
+    public PSVParser(CalendarProgram owner){
+        super.program = owner;
+    }
     @Override
     void readData() {
         String csvFile = "DLSU Unicalendar.psv";
         String line = "";
-        String cvsSplitBy = "|";
         String[] parts;
         String[] date;
         
@@ -33,12 +35,14 @@ public class PSVParser extends DataParser{
         	BufferedReader br = new BufferedReader(new FileReader(csvFile));
             while ((line = br.readLine()) != null) {
 
-                // use comma as separator
-                 parts = line.split(cvsSplitBy);
+                
+                 parts = line.split(" \\| ");
+                 
                  //temp = Arrays.asList(parts);
                  date = parts[1].split("/");
+                 
                  temp = new Events(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]), parts[0], parts[2]);
-                 temp.setIsHoliday(true);
+                 temp.setIsHoliday(false);
                  events.add(temp);
                  
             }
@@ -59,12 +63,12 @@ public class PSVParser extends DataParser{
 			//System.out.println(data.get(i).toString());
 			//collect = events.get(i).stream().collect(Collectors.joining(","));
 			//writer.write(collect);
-                        if(events.get(i).isIsHoliday() != true){
+                        if(events.get(i).isIsHoliday() == false){
 			
                         writer.write(events.get(i).getEventName());
-                        writer.append('|');
+                        writer.write(" | ");
                         writer.write(events.get(i).getMonth() + "/" + events.get(i).getDate() + "/" + events.get(i).getYear());
-                        writer.append('|');
+                        writer.write(" | ");
                         writer.write(events.get(i).getColorName());
 			writer.append('\n');
                         }

@@ -37,7 +37,10 @@ public class CalendarProgram{
         
         //List of events
         private ArrayList<Events> events = new ArrayList<Events>();
+        //More Variables
         private CalendarProgram thisProgram;
+        CSVParser CSVp;
+        PSVParser PSVp;
         
         public void addEventFromParser(Events e){
             events.add(e);
@@ -45,6 +48,18 @@ public class CalendarProgram{
 
         public ArrayList<Events> getEvents() {
         return events;
+        }
+        
+        public void readAndStoreEvents(){
+            CSVp.readData();
+            PSVp.readData();
+            CSVp.processData();
+            PSVp.processData();
+            
+        }
+        
+        public void storeData(){
+            
         }
         
         public void refreshCalendar(int month, int year)
@@ -72,7 +87,7 @@ public class CalendarProgram{
 		nod = cal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
 		som = cal.get(GregorianCalendar.DAY_OF_WEEK);
                 
-                System.out.println(nod + "/"+ som);
+                //System.out.println(nod + "/"+ som);
 		
                 
                 //vital loop
@@ -96,7 +111,14 @@ public class CalendarProgram{
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
 		catch (Exception e) {}
+                
+                //Added Code
                 thisProgram = this;
+                CSVp = new CSVParser(this);
+                PSVp = new PSVParser(this);
+                readAndStoreEvents();
+                
+                
 		frmMain = new JFrame ("Calendar Application");
                 frmMain.setSize(660, 750);
 		pane = frmMain.getContentPane();

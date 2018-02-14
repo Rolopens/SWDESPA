@@ -41,6 +41,7 @@ public class CSVParser extends DataParser{
                 // use comma as separator
                  parts = line.split(cvsSplitBy);
                  //temp = Arrays.asList(parts);
+                 
                  date = parts[0].split("/");
                  temp = new Events(Integer.parseInt(date[0]), Integer.parseInt(date[1]), Integer.parseInt(date[2]), parts[1], parts[2]);
                  temp.setIsHoliday(true);
@@ -59,7 +60,7 @@ public class CSVParser extends DataParser{
 		FileWriter writer;
                 events = program.getEvents();
         try {
-            writer = new FileWriter("Philippine Holdidays.csv");
+            writer = new FileWriter("Philippine Holidays.csv");
             for (int i = 0; i < events.size(); i++) {
 			//System.out.println(data.get(i).toString());
 			//collect = events.get(i).stream().collect(Collectors.joining(","));
