@@ -87,7 +87,7 @@ public class addEvent extends JFrame {
                 else
                     subString = temp;     
                 
-                newEvent = new Events(program.getMonthToday(), Integer.parseInt(subString), program.getYearToday(), eventName.getText(), (String)(colors.getSelectedItem()));
+                newEvent = new Events(program.getMonthToday() + 1, Integer.parseInt(subString), program.getYearToday(), eventName.getText(), (String)(colors.getSelectedItem()));
                 if(isHoliday.isSelected() == true)
                     newEvent.setIsHoliday(true);
                 
