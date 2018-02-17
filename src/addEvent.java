@@ -1,7 +1,10 @@
 
+import dayobjects.Events;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -60,6 +63,40 @@ public class addEvent extends JFrame {
         setLocation(600, 300);
         setVisible(true);
         setResizable(false);
+        
+        submitButton.addActionListener(new ChoiceListener());
+        cancelButton.addActionListener(new ChoiceListener());
+        
         //setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
+    
+    class ChoiceListener implements ActionListener {    
+        ChoiceListener() {
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {            
+            if(e.getActionCommand().equals("Submit") && (!(eventName.getText().equals("")))) {                
+                String temp = String.valueOf(program.getCalendarTable().getValueAt(program.getCalendarTable().getSelectedRow(), program.getCalendarTable().getSelectedColumn()));
+                String subString;
+                int iend = temp.indexOf(" ");
+                if(iend != -1)
+                    subString = temp.substring(0, iend);
+                else
+                    subString = temp;                
+                
+                (program.getEvents()).add(new Events(program.getMonthToday(), Integer.parseInt(subString), program.getYearToday(), eventName.getText(), (String)(colors.getSelectedItem())));
+                
+                program.refreshCalendar(program.getMonthToday(), program.getYearToday());
+                
+                /* if(isHoliday.isSelected() == true)
+                    System.out.println("placeholder");
+                else
+                    System.out.println("placeholder"); */
+            }                        
+        dispose();
+    }
+    }
+  
+    
 }

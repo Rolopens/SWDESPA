@@ -38,6 +38,7 @@ public class CalendarProgram{
         //List of events
         private ArrayList<Events> events = new ArrayList<Events>();
         //More Variables
+        private JPanel currentPanel;
         private CalendarProgram thisProgram;
         CSVParser CSVp;
         PSVParser PSVp;
@@ -47,7 +48,27 @@ public class CalendarProgram{
         }
 
         public ArrayList<Events> getEvents() {
-        return events;
+            return events;
+        }
+        
+        public JTable getCalendarTable() {
+            return calendarTable;
+        }
+        
+        /* public int getYearBound() {
+            return yearBound;
+        }
+        
+        public int getMonthBound() {
+            return monthBound;
+        } */
+        
+        public int getYearToday() {
+            return yearToday;
+        }
+        
+        public int getMonthToday() {
+            return monthToday;
         }
         
         public void readAndStoreEvents(){
@@ -98,9 +119,15 @@ public class CalendarProgram{
                         //System.out.println(row + " " + column);
 			modelCalendarTable.setValueAt(i, row, column);
                         
+                        for(int k = 0; k < events.size(); k++) {
+                            if((events.get(k).getMonth() == month) && (events.get(k).getYear() == year) && (events.get(k).getDate() == i))
+                                    modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);
+                        }
+                             
+                        
 		}
 
-		calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new TableRenderer());
+		calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new TableRenderer(events));
                 
                 
 	}
@@ -144,8 +171,15 @@ public class CalendarProgram{
                     public void mouseClicked(MouseEvent evt)  
                     {  
                         int col = calendarTable.getSelectedColumn();  
-                        int row = calendarTable.getSelectedRow();  
-                        addEvent temp = new addEvent(thisProgram);
+                        int row = calendarTable.getSelectedRow();
+                        addEvent temp;
+                        
+                        if(calendarTable.getValueAt(row, col) != null) {                                                        
+                            temp = new addEvent(thisProgram);
+                            
+                            
+                            
+                        }
                         
                         //System.out.println(monthToday+1);
                         //System.out.println(yearToday);
