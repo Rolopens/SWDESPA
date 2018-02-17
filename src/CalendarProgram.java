@@ -40,8 +40,8 @@ public class CalendarProgram{
         //More Variables
         private JPanel currentPanel;
         private CalendarProgram thisProgram;
-        CSVParser CSVp;
-        PSVParser PSVp;
+        private CSVParser CSVp;
+        private PSVParser PSVp;
         
         public void addEventFromParser(Events e){
             events.add(e);
@@ -80,7 +80,8 @@ public class CalendarProgram{
         }
         
         public void storeData(){
-            
+            CSVp.writeData();
+            PSVp.writeData();
         }
         
         public void refreshCalendar(int month, int year)
@@ -120,13 +121,15 @@ public class CalendarProgram{
 			modelCalendarTable.setValueAt(i, row, column);
                         
                         for(int k = 0; k < events.size(); k++) {
-                            if((events.get(k).getMonth() == month) && (events.get(k).getYear() == year) && (events.get(k).getDate() == i))
+                            if((events.get(k).getMonth()-1 == month) && (events.get(k).getYear() == year) && (events.get(k).getDate() == i))
+                                    modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);
+                            else if((events.get(k).isIsHoliday()) && (events.get(k).getMonth()-1 == month) && (events.get(k).getYear() <= year) && (events.get(k).getDate() == i))
                                     modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);
                         }
                              
                         
 		}
-
+                storeData();
 		calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new TableRenderer(events));
                 
                 
@@ -138,13 +141,12 @@ public class CalendarProgram{
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
 		catch (Exception e) {}
-                
+              
                 //Added Code
                 thisProgram = this;
                 CSVp = new CSVParser(this);
                 PSVp = new PSVParser(this);
                 readAndStoreEvents();
-                
                 
 		frmMain = new JFrame ("Calendar Application");
                 frmMain.setSize(660, 750);
@@ -161,7 +163,7 @@ public class CalendarProgram{
                 {
                     public boolean isCellEditable(int rowIndex, int mColIndex)
                     {
-                        return true;
+                        return false;
                     }
                 };
                 
@@ -176,7 +178,7 @@ public class CalendarProgram{
                         
                         if(calendarTable.getValueAt(row, col) != null) {                                                        
                             temp = new addEvent(thisProgram);
-                            
+                        storeData();
                             
                             
                         }
@@ -245,6 +247,7 @@ public class CalendarProgram{
 			cmbYear.addItem(String.valueOf(i));
 		}
 		
+                
 		refreshCalendar (monthBound, yearBound); //Refresh calendar
 	}
 	

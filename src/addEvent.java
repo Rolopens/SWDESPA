@@ -79,20 +79,23 @@ public class addEvent extends JFrame {
             if(e.getActionCommand().equals("Submit") && (!(eventName.getText().equals("")))) {                
                 String temp = String.valueOf(program.getCalendarTable().getValueAt(program.getCalendarTable().getSelectedRow(), program.getCalendarTable().getSelectedColumn()));
                 String subString;
+                Events newEvent;
+                
                 int iend = temp.indexOf(" ");
                 if(iend != -1)
                     subString = temp.substring(0, iend);
                 else
-                    subString = temp;                
+                    subString = temp;     
                 
-                (program.getEvents()).add(new Events(program.getMonthToday(), Integer.parseInt(subString), program.getYearToday(), eventName.getText(), (String)(colors.getSelectedItem())));
+                newEvent = new Events(program.getMonthToday(), Integer.parseInt(subString), program.getYearToday(), eventName.getText(), (String)(colors.getSelectedItem()));
+                if(isHoliday.isSelected() == true)
+                    newEvent.setIsHoliday(true);
+                
+                program.getEvents().add(newEvent);
                 
                 program.refreshCalendar(program.getMonthToday(), program.getYearToday());
                 
-                /* if(isHoliday.isSelected() == true)
-                    System.out.println("placeholder");
-                else
-                    System.out.println("placeholder"); */
+                
             }                        
         dispose();
     }
