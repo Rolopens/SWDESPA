@@ -194,10 +194,11 @@ public class CalendarProgram{
                         int row = calendarTable.getSelectedRow();
                         addEvent temp;
                         if(calendarTable.getValueAt(row, col) != null)                                                        
-                            temp = new addEvent(thisProgram);
+                            temp = new addEvent(thisProgram, Integer.parseInt(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]));
                         storeData();
                         flag = false;
                         }
+                        
                         //System.out.println(monthToday+1);
                         //System.out.println(yearToday);
                     }

@@ -33,11 +33,12 @@ public class addEvent extends JFrame {
     private JPanel panel2;
     
     private CalendarProgram program;
+    private int day;
     
-    
-    public addEvent(CalendarProgram owner){
+    public addEvent(CalendarProgram owner, int day){
         super("Add Event");
         this.program = owner;
+        this.day = day;
         String[] color = {"Red", "Green", "Blue"};
         this.setLayout(new BorderLayout());
         panel1 = new JPanel();
@@ -79,16 +80,16 @@ public class addEvent extends JFrame {
         program.trueFlag();
             if(e.getActionCommand().equals("Submit") && (!(eventName.getText().equals("")))) {                
                 String temp = String.valueOf(program.getCalendarTable().getValueAt(program.getCalendarTable().getSelectedRow(), program.getCalendarTable().getSelectedColumn()));
-                String subString;
+                //String subString;
                 Events newEvent;
-                
+                /*
                 int iend = temp.indexOf(" ");
                 if(iend != -1)
                     subString = temp.substring(0, iend);
                 else
                     subString = temp;     
-                
-                newEvent = new Events(program.getMonthToday() + 1, Integer.parseInt(subString), program.getYearToday(), eventName.getText(), (String)(colors.getSelectedItem()));
+                */
+                newEvent = new Events(program.getMonthToday() + 1, day, program.getYearToday(), eventName.getText(), (String)(colors.getSelectedItem()));
                 if(isHoliday.isSelected() == true)
                     newEvent.setIsHoliday(true);
                 
