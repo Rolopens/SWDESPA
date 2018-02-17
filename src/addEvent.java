@@ -75,7 +75,8 @@ public class addEvent extends JFrame {
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {            
+        public void actionPerformed(ActionEvent e) {   
+        program.trueFlag();
             if(e.getActionCommand().equals("Submit") && (!(eventName.getText().equals("")))) {                
                 String temp = String.valueOf(program.getCalendarTable().getValueAt(program.getCalendarTable().getSelectedRow(), program.getCalendarTable().getSelectedColumn()));
                 String subString;

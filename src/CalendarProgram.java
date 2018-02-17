@@ -37,11 +37,27 @@ public class CalendarProgram{
         
         //List of events
         private ArrayList<Events> events = new ArrayList<Events>();
+        //For observers
+        private ArrayList<ObserverFB> observers = new ArrayList<ObserverFB>();
         //More Variables
-        private JPanel currentPanel;
         private CalendarProgram thisProgram;
         private CSVParser CSVp;
         private PSVParser PSVp;
+        private boolean flag;
+        
+        public void trueFlag(){
+            this.flag = true;
+        }
+        
+        public void attachObserver(ObserverFB o){
+            observers.add(o);
+        }
+        
+        public void notifyObservers(){
+            int j;
+            for (j=0;j<observers.size();j++)
+                observers.get(j).update();
+        }
         
         public void addEventFromParser(Events e){
             events.add(e);
@@ -146,6 +162,7 @@ public class CalendarProgram{
                 thisProgram = this;
                 CSVp = new CSVParser(this);
                 PSVp = new PSVParser(this);
+                flag = true;
                 readAndStoreEvents();
                 
 		frmMain = new JFrame ("Calendar Application");
@@ -172,17 +189,15 @@ public class CalendarProgram{
                 {  
                     public void mouseClicked(MouseEvent evt)  
                     {  
+                        if(flag == true){
                         int col = calendarTable.getSelectedColumn();  
                         int row = calendarTable.getSelectedRow();
                         addEvent temp;
-                        
-                        if(calendarTable.getValueAt(row, col) != null) {                                                        
+                        if(calendarTable.getValueAt(row, col) != null)                                                        
                             temp = new addEvent(thisProgram);
                         storeData();
-                            
-                            
+                        flag = false;
                         }
-                        
                         //System.out.println(monthToday+1);
                         //System.out.println(yearToday);
                     }
