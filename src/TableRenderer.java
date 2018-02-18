@@ -8,51 +8,85 @@ import dayobjects.Events;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.JTextPane;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 /**
  *
  * @author Arturo III
  */
-public class TableRenderer extends DefaultTableCellRenderer
+public class TableRenderer extends JTextPane implements TableCellRenderer
 {
     private ArrayList<Events> events;
     public TableRenderer(ArrayList<Events> e) {
         this.events = e;
-    }    
+    }
     
     public Component getTableCellRendererComponent (JTable table, Object value, boolean selected, boolean focused, int row, int column)
     {
-            super.getTableCellRendererComponent(table, value, selected, focused, row, column);
+            StyledDocument doc = this.getStyledDocument();
+            Style style = this.addStyle("test", null);
+            StyleConstants.setForeground(style, Color.black);
+            
+            // super.getTableCellRendererComponent(table, value, selected, focused, row, column);
             if (column == 0 || column == 6)
                     setBackground(new Color(220,220,255));
             else
                     setBackground(Color.WHITE);
             setBorder(null);
             
-            setForeground(Color.black);
-                        
-            String str = String.valueOf(value);
-            String sub = str.substring(str.indexOf(" ")+1, str.length());            
+                // setForeground(Color.black);
+                
+            try {
+                doc.remove(0, doc.getLength());
+            } catch (BadLocationException ex) {
+                Logger.getLogger(TableRenderer.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
-            for(int x = 0; x < events.size(); x++) {
-                if(sub.contains(events.get(x).getEventName())) {
-                    switch((events.get(x).getColorName().toUpperCase()).replaceAll("\\s","")) {
-                        case "RED":
-                            setForeground(Color.red);
-                            break;
-                        case "BLUE":
-                            setForeground(Color.blue);
-                            break;
-                        case "GREEN":
-                            setForeground(Color.green);
-                            break;
-                        default:
-                            setForeground(Color.black);
+            if(value != null) {                
+                String str = String.valueOf(value);
+                String sub = str.substring(str.indexOf(" ")+1, str.length());            
+                
+                try {
+                    if(str.indexOf(" ") == -1)
+                        doc.insertString(doc.getLength(), str, style);
+                    else
+                        doc.insertString(doc.getLength(), str.substring(0, str.indexOf(" ")), style);
+                
+                    for(int x = 0; x < events.size(); x++) {
+                        if(sub.contains(events.get(x).getEventName())) {
+                            switch((events.get(x).getColorName().toUpperCase()).replaceAll("\\s","")) {
+                                case "RED":
+                                    StyleConstants.setForeground(style, Color.red);
+                                    // setForeground(Color.red);
+                                    break;
+                                case "BLUE":
+                                    StyleConstants.setForeground(style, Color.blue);
+                                    setForeground(Color.blue);
+                                    break;
+                                case "GREEN":
+                                    StyleConstants.setForeground(style, Color.green);
+                                    setForeground(Color.green);
+                                    break;
+                                default:
+                                    setForeground(Color.black);
+                            }
+                                doc.insertString(doc.getLength(), " " + events.get(x).getEventName(), style);
+                        }
                     }
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(TableRenderer.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }                            
+            }
             
             if (selected){
                 setBackground(Color.GRAY);
