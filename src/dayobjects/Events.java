@@ -25,6 +25,7 @@ public class Events {
         this.colorName = colorName;
         this.isHoliday = false;
     }
+
         
     public int getMonth() {
         return month;

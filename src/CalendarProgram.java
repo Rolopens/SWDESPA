@@ -10,6 +10,7 @@
  */
 
 import dayobjects.Events;
+import facebook.FBView;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
@@ -43,7 +44,9 @@ public class CalendarProgram{
         private CalendarProgram thisProgram;
         private CSVParser CSVp;
         private PSVParser PSVp;
+        
         private boolean flag;
+        
         
         public void trueFlag(){
             this.flag = true;
@@ -51,12 +54,25 @@ public class CalendarProgram{
         
         public void attachObserver(ObserverFB o){
             observers.add(o);
+            notifyObservers();
         }
         
         public void notifyObservers(){
-            int j;
-            for (j=0;j<observers.size();j++)
-                observers.get(j).update();
+            int j, k;
+            //System.out.println(monthToday + "/" + dayBound +"/"+yearToday);
+            for (k = 0; k < events.size(); k++){
+                if(events.get(k).getDate() == dayBound && events.get(k).getMonth()-1 == monthToday && events.get(k).getYear() == yearToday){
+                    for (j=0;j<observers.size();j++){
+                        observers.get(j).update(events.get(k));
+                    }
+                }
+                else if(events.get(k).getDate() == dayBound && events.get(k).getMonth()-1 == monthToday && events.get(k).getYear() < yearToday && events.get(k).isIsHoliday()){
+                    for (j=0;j<observers.size();j++){
+                        observers.get(j).update(events.get(k));
+                    }
+                }
+            }
+            
         }
         
         public void addEventFromParser(Events e){
@@ -71,14 +87,6 @@ public class CalendarProgram{
             return calendarTable;
         }
         
-        /* public int getYearBound() {
-            return yearBound;
-        }
-        
-        public int getMonthBound() {
-            return monthBound;
-        } */
-        
         public int getYearToday() {
             return yearToday;
         }
@@ -92,7 +100,6 @@ public class CalendarProgram{
             PSVp.readData();
             CSVp.processData();
             PSVp.processData();
-            
         }
         
         public void storeData(){
@@ -104,7 +111,8 @@ public class CalendarProgram{
         {
 		String[] months =  {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 		int nod, som, i, j;
-			
+		Calendar now = Calendar.getInstance();
+                
 		btnPrev.setEnabled(true);
 		btnNext.setEnabled(true);
 		if (month == 0 && year <= yearBound-10)
@@ -157,13 +165,14 @@ public class CalendarProgram{
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 }
 		catch (Exception e) {}
-              
+                
                 //Added Code
                 thisProgram = this;
                 CSVp = new CSVParser(this);
                 PSVp = new PSVParser(this);
                 flag = true;
                 readAndStoreEvents();
+                
                 
 		frmMain = new JFrame ("Calendar Application");
                 frmMain.setSize(660, 750);
@@ -178,15 +187,18 @@ public class CalendarProgram{
 		btnNext = new JButton (">>");
 		modelCalendarTable = new DefaultTableModel()
                 {
+                    @Override
                     public boolean isCellEditable(int rowIndex, int mColIndex)
                     {
                         return false;
+                        //return true;
                     }
                 };
                 
 		calendarTable = new JTable(modelCalendarTable);
                 calendarTable.addMouseListener(new MouseAdapter()   
                 {  
+                    @Override
                     public void mouseClicked(MouseEvent evt)  
                     {  
                         if(flag == true){
@@ -195,7 +207,7 @@ public class CalendarProgram{
                         addEvent temp;
                         if(calendarTable.getValueAt(row, col) != null)                                                        
                             temp = new addEvent(thisProgram, Integer.parseInt(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]));
-                        storeData();
+                        //storeData();
                         flag = false;
                         }
                         
@@ -270,6 +282,7 @@ public class CalendarProgram{
 
 	class btnPrev_Action implements ActionListener
         {
+                @Override
 		public void actionPerformed (ActionEvent e)
                 {
 			if (monthToday == 0)
@@ -286,6 +299,7 @@ public class CalendarProgram{
 	}
 	class btnNext_Action implements ActionListener
         {
+                @Override
 		public void actionPerformed (ActionEvent e)
                 {
 			if (monthToday == 11)
@@ -302,6 +316,7 @@ public class CalendarProgram{
 	}
 	class cmbYear_Action implements ActionListener
         {
+                @Override
 		public void actionPerformed (ActionEvent e)
                 {
 			if (cmbYear.getSelectedItem() != null)

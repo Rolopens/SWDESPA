@@ -78,6 +78,7 @@ public class addEvent extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {   
         program.trueFlag();
+        program.storeData();
             if(e.getActionCommand().equals("Submit") && (!(eventName.getText().equals("")))) {                
                 String temp = String.valueOf(program.getCalendarTable().getValueAt(program.getCalendarTable().getSelectedRow(), program.getCalendarTable().getSelectedColumn()));
                 //String subString;
@@ -94,7 +95,7 @@ public class addEvent extends JFrame {
                     newEvent.setIsHoliday(true);
                 
                 program.getEvents().add(newEvent);
-                
+                program.notifyObservers();
                 program.refreshCalendar(program.getMonthToday(), program.getYearToday());
                 
                 
