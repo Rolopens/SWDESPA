@@ -60,9 +60,6 @@ public class PSVParser extends DataParser{
         try {
             writer = new FileWriter("DLSU Unicalendar.psv");
             for (int i = 0; i < events.size(); i++) {
-			//System.out.println(data.get(i).toString());
-			//collect = events.get(i).stream().collect(Collectors.joining(","));
-			//writer.write(collect);
                         if(events.get(i).isIsHoliday() == false){
 			
                         writer.write(events.get(i).getEventName());

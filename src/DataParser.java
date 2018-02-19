@@ -14,7 +14,7 @@ import java.util.List;
  */
 abstract public class DataParser {
     protected List<Events> events = new ArrayList<Events>();
-    protected String collect;
+    
     protected CalendarProgram program;
     
     abstract void readData();

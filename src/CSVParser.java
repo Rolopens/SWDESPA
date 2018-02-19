@@ -62,9 +62,6 @@ public class CSVParser extends DataParser{
         try {
             writer = new FileWriter("Philippine Holidays.csv");
             for (int i = 0; i < events.size(); i++) {
-			//System.out.println(data.get(i).toString());
-			//collect = events.get(i).stream().collect(Collectors.joining(","));
-			//writer.write(collect);
                         if(events.get(i).isIsHoliday() == true){
 			writer.write(events.get(i).getMonth() + "/" + events.get(i).getDate() + "/" + events.get(i).getYear());
                         writer.append(',');

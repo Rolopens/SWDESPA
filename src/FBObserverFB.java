@@ -32,16 +32,16 @@ public class FBObserverFB extends ObserverFB{
         eventsInView.add(e);
         switch((e.getColorName().toUpperCase()).replaceAll("\\s","")) {
                         case "RED":
-                           view.showNewEvent(e.getEventName(), e.getMonth()-1, e.getDate(), e.getYear(), Color.RED);
+                           view.showNewEvent(e.getEventName(), e.getMonth(), e.getDate(), e.getYear(), Color.RED);
                             break;
                         case "BLUE":
-                            view.showNewEvent(e.getEventName(), e.getMonth()-1, e.getDate(), e.getYear(), Color.BLUE);
+                            view.showNewEvent(e.getEventName(), e.getMonth(), e.getDate(), e.getYear(), Color.BLUE);
                             break;
                         case "GREEN":
-                            view.showNewEvent(e.getEventName(), e.getMonth()-1, e.getDate(), e.getYear(), Color.GREEN);
+                            view.showNewEvent(e.getEventName(), e.getMonth(), e.getDate(), e.getYear(), Color.GREEN);
                             break;
                         default:
-                            view.showNewEvent(e.getEventName(), e.getMonth()-1, e.getDate(), e.getYear(), Color.BLACK);
+                            view.showNewEvent(e.getEventName(), e.getMonth(), e.getDate(), e.getYear(), Color.BLACK);
                     }
             
         }

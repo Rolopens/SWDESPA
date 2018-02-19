@@ -42,8 +42,8 @@ public class CalendarProgram{
         private ArrayList<ObserverFB> observers = new ArrayList<ObserverFB>();
         //More Variables
         private CalendarProgram thisProgram;
-        private CSVParser CSVp;
-        private PSVParser PSVp;
+        private DataParser CSVp;
+        private DataParser PSVp;
         
         private boolean flag;
         
