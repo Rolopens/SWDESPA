@@ -22,9 +22,9 @@ public class DesignChallange2 {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        //CalendarController c = new CalendarController(new EventsService(new EventsConnection()), new CalendarProgram());
-        EventsService test = new EventsService(new EventsConnection());
-        System.out.println(test.getAll().get(0).getDate().split("-")[0]);
+        CalendarController c = new CalendarController(new EventsService(new EventsConnection()), new CalendarProgram());
+        //EventsService test = new EventsService(new EventsConnection());
+        //System.out.println(test.getAll().get(0).getDate().split("-")[1]);
     }
     
 }

@@ -65,7 +65,7 @@ public class TableRenderer extends JTextPane implements TableCellRenderer
                         doc.insertString(doc.getLength(), str.substring(0, str.indexOf(" ")), style);
                 
                     for(int x = 0; x < events.size(); x++) {
-                        if(sub.contains(events.get(x).getEventName())) {
+                        if(sub.equals(events.get(x).getEventName())) {
                             switch((events.get(x).getColor().toUpperCase()).replaceAll("\\s","")) {
                                 case "RED":
                                     StyleConstants.setForeground(style, Color.red);
@@ -76,7 +76,7 @@ public class TableRenderer extends JTextPane implements TableCellRenderer
                                     setForeground(Color.blue);
                                     break;
                                 case "GREEN":
-                                    StyleConstants.setForeground(style, Color.green);
+                                    StyleConstants.setForeground(style, Color.GREEN);
                                     setForeground(Color.green);
                                     break;
                                 default:

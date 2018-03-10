@@ -6,6 +6,9 @@
 package controller;
 
 
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import model.EventsObject;
 import model.EventsService;
 import view.CalendarProgram;
 
@@ -20,9 +23,27 @@ public class CalendarController {
     public CalendarController(EventsService model, CalendarProgram view) {
         this.model = model;
         this.view = view;
+        passData();
+        this.view.setController(this);
     }
     
-    public void passData(){
-        view.setEventsArrayList(model.getAll());
+    private void passData(){
+        this.view.setEventsArrayList(model.getAll());
+        GregorianCalendar cal = new GregorianCalendar();
+        int monthBound = cal.get(GregorianCalendar.MONTH);
+        int yearBound = cal.get(GregorianCalendar.YEAR);
+        this.view.refreshCalendar(monthBound, yearBound);
+        
+        /*
+        ArrayList<EventsObject> temp = model.getAll();
+        for (int i = 0; i < temp.size(); i++)
+            System.out.println(temp.get(i).toString());
+*/
+    }
+    
+    public void addData(EventsObject e){
+        model.addUser(e);
+        passData();
+        
     }
 }

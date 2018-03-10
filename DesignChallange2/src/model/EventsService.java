@@ -71,4 +71,44 @@ public class EventsService {
 
         return events;
     }
+
+    public void addUser(EventsObject e) {
+        //get connection
+        Connection cnt = connection.getConnection();
+
+        //create query
+        String query = "INSERT INTO " + EventsObject.TABLE + " VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            //create prepared statement
+            PreparedStatement ps = cnt.prepareStatement(query);
+
+            //prepare the values
+            ps.setString(1, e.getEventName());
+            ps.setInt(2, e.getStartHour());
+            ps.setInt(3, e.getStartMin());
+            ps.setInt(4, e.getEndHour());
+            ps.setInt(5, e.getEndMin());
+            ps.setString(6, e.getDate());
+            ps.setString(7, e.getColor());
+            ps.setInt(8, e.getType());
+            
+            
+            
+
+            //execute the update
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+            cnt.close();
+
+            System.out.println("[UserS] INSERTION SUCCESS :3!");
+        } catch (SQLException ex) {
+            // TODO Auto-generated catch block
+            System.out.println("[UserS] INSERTION FAILED! :(");
+            ex.printStackTrace();
+        }
+
+    }
 }
