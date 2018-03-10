@@ -1,0 +1,74 @@
+package model;
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ *
+ * @author Rolo
+ */
+public class EventsService {
+
+    private EventsConnection connection;
+
+    public EventsService(EventsConnection connection) {
+        this.connection = connection;
+    }
+
+    private EventsObject toEventObject(ResultSet rs) throws SQLException {
+        EventsObject event = new EventsObject();
+
+        //User.setUsername(rs.getString(User.COL_USERNAME));
+        event.setEventName(rs.getString(EventsObject.COL_EVENTNAME));
+        event.setStartHour(rs.getInt(EventsObject.COL_STARTHOUR));
+        event.setStartMin(rs.getInt(EventsObject.COL_STARTMIN));
+        event.setEndHour(rs.getInt(EventsObject.COL_ENDHOUR));
+        event.setEndMin(rs.getInt(EventsObject.COL_ENDMIN));
+        event.setDate(rs.getString(EventsObject.COL_DATE));
+        event.setColor(rs.getString(EventsObject.COL_COLOR));
+        event.setType(rs.getInt(EventsObject.COL_TYPE));
+
+        return event;
+    }
+
+    public ArrayList<EventsObject> getAll() {
+        ArrayList<EventsObject> events = new ArrayList<EventsObject>();
+
+        Connection cnt = connection.getConnection();
+
+        //create string query
+        String query = "SELECT * FROM " + EventsObject.TABLE + " ORDER BY " + EventsObject.COL_DATE;
+        try {
+            //create prepared statement
+            PreparedStatement ps = cnt.prepareStatement(query);
+
+            //get result and store in result set
+            ResultSet rs = ps.executeQuery();
+
+            //transform set to list
+            while (rs.next()) {
+                events.add(toEventObject(rs));
+            }
+
+            ps.close();
+            rs.close();
+            cnt.close();
+
+            System.out.println("[UserS] SELECT SUCCESS!");
+        } catch (SQLException e) {
+            System.out.println("[UserS] SELECT FAILED!");
+            e.printStackTrace();
+        }
+
+        return events;
+    }
+}
