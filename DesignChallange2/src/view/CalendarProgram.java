@@ -1,5 +1,4 @@
 package view;
-
 /**
  *
  * @author Arturo III; Llamas, Antonio Miguel B.; Pena, Romeo Manuel N.
@@ -14,7 +13,6 @@ import java.util.*;
 import model.EventsObject;
 
 public class CalendarProgram {
-
     /**
      * ** Day components ***
      */
@@ -30,7 +28,7 @@ public class CalendarProgram {
     public Container pane;
     public JScrollPane scrollCalendarTable;
     public JPanel calendarPanel;
-
+    
     public JComboBox startTime;
     public JComboBox endTime;
     public JButton addEvent;
@@ -45,7 +43,7 @@ public class CalendarProgram {
      */
     public JTable calendarTable;
     public DefaultTableModel modelCalendarTable;
-
+    
     /**
      * ** Activity table components **
      */
@@ -54,6 +52,14 @@ public class CalendarProgram {
     public DefaultTableModel modelActivityTable;
     public JFrame activityFrame;
     public JPanel activityPanel;
+    
+    public JScrollPane scrollAgendaTable;
+    public JTable agendaTable;
+    public DefaultTableModel modelAgendaTable;
+    public JFrame agendaFrame;
+    public JPanel agendaPanel;
+    
+    public JTabbedPane tabbedPane;
 
     // List of events
     private ArrayList<EventsObject> events = new ArrayList<EventsObject>();
@@ -86,13 +92,13 @@ public class CalendarProgram {
     public int getMonthToday() {
         return monthToday;
     }
-
+    
     public CalendarProgram() {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
         }
-
+        
         frmMain = new JFrame("Calendar Application");
         frmMain.setSize(660, 750);
         frmMain.setSize(1300, 780);
@@ -103,13 +109,73 @@ public class CalendarProgram {
         monthLabel = new JLabel("January");
         yearLabel = new JLabel("Change year:");
         cmbYear = new JComboBox();
-
-        String[] timeslots = new String[]{"0:00", "0:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30",
-            "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30",
-            "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
-            "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00",
-            "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"};
-
+                
+        String[] timeslots = new String[]{"0:00", "0:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00", "4:30", 
+                                            "5:00", "5:30", "6:00","6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30", 
+                                            "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30",
+                                            "15:00", "15:30", "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00",
+                                            "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30"};
+        
+        
+        
+        String[] activityHeaders = {"Time", "Activity"};
+        modelActivityTable = new DefaultTableModel() {
+            @Override
+            public String getColumnName(int index) {
+                return activityHeaders[index];
+            }
+        };
+        
+        modelActivityTable.setColumnCount(2);
+        modelActivityTable.setRowCount(48);
+        
+        for(int i = 0; i < 48; i++) {
+            modelActivityTable.setValueAt(timeslots[i], i, 0);
+        }
+        
+        activityTable = new JTable(modelActivityTable) {
+            @Override
+            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
+                JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
+                if(getValueAt(row, 0).toString().contains(":30") && column == 0)
+                    component.setForeground(Color.WHITE);
+                else
+                    component.setForeground(Color.BLACK);
+                return component;
+            }
+            @Override
+            public boolean isCellEditable(int rowIndex, int mColIndex) {
+                return false;
+            }
+        };
+        // activityTable.setBounds(660, 20, 600, 650);
+        activityPanel = new JPanel();
+        // activityPanel.setBounds(660, 20, 600, 650);
+        activityPanel.setVisible(true);
+        // activityFrame.add(activityTable);
+        scrollActivityTable = new JScrollPane(activityTable);
+        activityPanel.add(scrollActivityTable);
+        // pane.add(activityPanel);
+        // scrollActivityTable = new JScrollPane(activityTable);
+        
+        modelAgendaTable = new DefaultTableModel(activityHeaders, 0);
+        agendaTable = new JTable(modelAgendaTable);
+        
+        agendaPanel = new JPanel();
+        agendaPanel.setVisible(true);
+        scrollAgendaTable = new JScrollPane(agendaTable);
+        agendaPanel.add(scrollAgendaTable);
+        
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.setBounds(660, 20, 600, 650);
+        tabbedPane.addTab("Day", activityPanel);
+        tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
+        
+        tabbedPane.addTab("Agenda", agendaPanel);
+        tabbedPane.setMnemonicAt(1, KeyEvent.VK_2);
+        
+        pane.add(tabbedPane);
+        
         startTime = new JComboBox();
         endTime = new JComboBox();
         endTime.setModel(new DefaultComboBoxModel(timeslots));
@@ -121,12 +187,12 @@ public class CalendarProgram {
         dateArea = new JTextArea();
         eventName = new JTextArea("Enter name of event/task");
         addEvent = new JButton("Add");
-
+        
         btnPrev = new JButton("<<");
         btnNext = new JButton(">>");
-
+        
         dateArea.setEditable(false);
-
+          
         modelCalendarTable = new DefaultTableModel() {
             @Override
             public boolean isCellEditable(int rowIndex, int mColIndex) {
@@ -145,10 +211,49 @@ public class CalendarProgram {
             @Override
             public void mouseClicked(MouseEvent evt) {
                 try {
-                    int col = calendarTable.getSelectedColumn();
+                    int col = calendarTable.getSelectedColumn();  
                     int row = calendarTable.getSelectedRow();
-                    dateArea.setText(yearToday + "-" + (monthToday + 1) + "-" + modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
-                } catch (NullPointerException e) {
+                    dateArea.setText(yearToday + "-" + (monthToday+1) +"-"+ modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
+                    
+                    modelAgendaTable.setNumRows(0);
+                    
+                    for (int k = 0; k < 44; k++)
+                        modelActivityTable.setValueAt(null, k, 1);
+                    
+                    for (int k = 0; k < events.size(); k++) {
+                        if (((Integer.parseInt(events.get(k).getDate().split("-")[1]) - 1 == monthToday) && (Integer.parseInt(events.get(k).getDate().split("-")[0]) == yearToday) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) == (Integer.valueOf(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]))))) {                            
+                            String startMin;
+                            String endMin;
+                            if(events.get(k).getStartMin() == 0)
+                                startMin = "00";
+                            else
+                                startMin = Integer.toString(events.get(k).getStartMin());
+                            if(events.get(k).getEndMin() == 0)
+                                endMin = "00";
+                            else
+                                endMin = Integer.toString(events.get(k).getEndMin());
+                            
+                            String startTime = Integer.toString(events.get(k).getStartHour()) + ":" + startMin;
+                            String endTime = Integer.toString(events.get(k).getEndHour()) + ":" + endMin;                            
+                            String duration = startTime + " - " + endTime;
+                            
+                            Object[] rowData = {duration, events.get(k).getEventName()};
+                            modelAgendaTable.addRow(rowData);
+                            
+                            boolean color = false;
+                            for(int l = 0; l < 48; l++) {
+                                    if(modelActivityTable.getValueAt(l, 0).equals(endTime)) {             
+                                        color = false;
+                                    }
+                                    if(modelActivityTable.getValueAt(l, 0).equals(startTime)) {                                        
+                                        modelActivityTable.setValueAt(events.get(k).getEventName(), l, 1);
+                                        color = true;
+                                    }
+                            }
+                        }
+                    }
+                }
+                catch (NullPointerException e){
                     e.printStackTrace();
                 }
                 //System.out.println(monthToday+1);
@@ -177,7 +282,7 @@ public class CalendarProgram {
         calendarPanel.add(btnPrev);
         calendarPanel.add(btnNext);
         calendarPanel.add(scrollCalendarTable);
-
+        
         calendarPanel.add(eventButton);
         calendarPanel.add(taskButton);
         calendarPanel.add(eventName);
@@ -188,7 +293,7 @@ public class CalendarProgram {
         monthLabel.setBounds(320 - monthLabel.getPreferredSize().width / 2, 50, 200, 50);
         yearLabel.setBounds(20, 610, 160, 40);
         cmbYear.setBounds(460, 630, 160, 40);
-        startTime.setBounds(290, 630, 160, 40);
+        startTime.setBounds(290,630, 160, 40);
         endTime.setBounds(460, 630, 160, 40);
         btnPrev.setBounds(20, 50, 100, 50);
         btnNext.setBounds(520, 50, 100, 50);
@@ -198,7 +303,7 @@ public class CalendarProgram {
         eventName.setBounds(20, 600, 200, 20);
         dateArea.setBounds(20, 630, 200, 20);
         addEvent.setBounds(45, 670, 150, 50);
-
+        
         bg = new ButtonGroup();
         bg.add(eventButton);
         bg.add(taskButton);
@@ -234,48 +339,6 @@ public class CalendarProgram {
         for (int i = yearBound - 100; i <= yearBound + 100; i++) {
             cmbYear.addItem(String.valueOf(i));
         }
-
-        String[] activityHeaders = {"Time", "Activity"};
-        modelActivityTable = new DefaultTableModel() {
-            @Override
-            public String getColumnName(int index) {
-                return activityHeaders[index];
-            }
-        };
-
-        modelActivityTable.setColumnCount(2);
-        modelActivityTable.setRowCount(48);
-
-        for (int i = 0; i < 48; i++) {
-            modelActivityTable.setValueAt(timeslots[i], i, 0);
-        }
-
-        activityTable = new JTable(modelActivityTable) {
-            @Override
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-                JComponent component = (JComponent) super.prepareRenderer(renderer, row, column);
-                if (getValueAt(row, 0).toString().contains(":30") && column == 0) {
-                    component.setForeground(Color.WHITE);
-                } else {
-                    component.setForeground(Color.BLACK);
-                }
-                return component;
-            }
-
-            @Override
-            public boolean isCellEditable(int rowIndex, int mColIndex) {
-                return false;
-            }
-        };
-        // activityTable.setBounds(660, 20, 600, 650);
-        activityPanel = new JPanel();
-        activityPanel.setBounds(660, 20, 600, 650);
-        activityPanel.setVisible(true);
-        // activityFrame.add(activityTable);
-        scrollActivityTable = new JScrollPane(activityTable);
-        activityPanel.add(scrollActivityTable);
-        pane.add(activityPanel);
-        // scrollActivityTable = new JScrollPane(activityTable);
         /*
         activityPanel = new JPanel(null);
         pane.add(activityPanel);
@@ -293,7 +356,7 @@ public class CalendarProgram {
         modelActivityTable.setColumnCount(2);
         modelActivityTable.setRowCount(6);
         modelActivityTable.setValueAt("Yes", 1, 1);
-         */
+        */
         refreshCalendar(monthBound, yearBound); //Refresh calendar
     }
 
@@ -333,26 +396,24 @@ public class CalendarProgram {
             int column = (i + som - 2) % 7;
             //System.out.println(row + " " + column);
             modelCalendarTable.setValueAt(i, row, column);
-
+            
             //System.out.println(events.size());
             for (int k = 0; k < events.size(); k++) {
                 if (((Integer.parseInt(events.get(k).getDate().split("-")[1]) - 1 == month) && (Integer.parseInt(events.get(k).getDate().split("-")[0])) == year) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) == i)) {
-
                     modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);
-                }
+                } 
                 /*
                 else if ((events.get(k).isIsHoliday()) && (events.get(k).getMonth() - 1 == month) && (events.get(k).getYear() <= year) && (events.get(k).getDate() == i)) {
                     modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);
                 }
-                 */
+                */
             }
-
         }
 
         calendarTable.setDefaultRenderer(calendarTable.getColumnClass(0), new TableRenderer(events));
-
+        // doesn't work, will fix   activityTable.setDefaultRenderer(activityTable.getColumnClass(0), new ActivityTableRenderer(events));
     }
-
+    
     public boolean isConflicting(EventsObject e) {
         boolean verdict = false;
         for (int i = 0; i < events.size(); i++) {
@@ -375,9 +436,8 @@ public class CalendarProgram {
 
         return verdict;
     }
-
-    class btn_addEvent implements ActionListener {
-
+    
+    class btn_addEvent implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             //make a temporary event so that we can check if its ok
@@ -388,66 +448,63 @@ public class CalendarProgram {
             0 - for event
             1 - for task
             2 - for finished task
-             */
-            if (eventButton.isSelected()) {
+            */
+            if(eventButton.isSelected()){
                 temp.setType(0);
                 temp.setColor("Blue");
-            } else if (taskButton.isSelected()) {
+            }
+            else if(taskButton.isSelected()){
                 temp.setType(1);
                 temp.setColor("Green");
             }
-
-            if ((Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]) <= Integer.parseInt(endTime.getSelectedItem().toString().split(":")[0]))
-                    && (Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]) < Integer.parseInt(endTime.getSelectedItem().toString().split(":")[1]))
-                    && temp.getType() == 0) {
+            
+            if ( (Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]) <= Integer.parseInt(endTime.getSelectedItem().toString().split(":")[0]))  &&
+                    (Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]) < Integer.parseInt(endTime.getSelectedItem().toString().split(":")[1])) &&
+                        temp.getType() == 0){
                 temp.setStartHour(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]));
                 temp.setStartMin(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]));
                 temp.setEndHour(Integer.parseInt(endTime.getSelectedItem().toString().split(":")[0]));
                 temp.setEndMin(Integer.parseInt(endTime.getSelectedItem().toString().split(":")[1]));
-            } else if (temp.getType() == 1) {
+            }
+            else if (temp.getType() == 1){
                 temp.setStartHour(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]));
                 temp.setStartMin(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]));
                 temp.setEndHour(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]) + 1);
                 temp.setEndMin(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]) + 30);
-                if (temp.getEndMin() == 60) {
+                if(temp.getEndMin() == 60)
                     temp.setEndMin(0);
-                }
             }
-
-            if (!dateArea.getText().equals("")) {
+            
+            if (!dateArea.getText().equals("")){
                 temp.setDate(dateArea.getText());
-            } else {
+            }
+            else{
                 temp.setDate(null);
             }
-
+            
             //check if ok
-            if (!isConflicting(temp)) {
+            if(!isConflicting(temp)){
                 safe = true;
             }
-            if (safe == true) {
+            if (safe == true){
                 controller.addData(temp);
-            } else {
-                System.out.println("Error");
             }
         }
     }
 
-    class btn_radioTask implements ActionListener {
-
+    class btn_radioTask implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             endTime.setVisible(false);
         }
     }
-
-    class btn_radioEvent implements ActionListener {
-
+    
+    class btn_radioEvent implements ActionListener{
         @Override
         public void actionPerformed(ActionEvent e) {
             endTime.setVisible(true);
         }
     }
-
     class btnPrev_Action implements ActionListener {
 
         @Override
