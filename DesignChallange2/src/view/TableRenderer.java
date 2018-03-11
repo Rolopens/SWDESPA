@@ -50,7 +50,7 @@ public class TableRenderer extends JTextPane implements TableCellRenderer
                 
             try {
                 doc.remove(0, doc.getLength());
-            } catch (BadLocationException ex) {
+                } catch (BadLocationException ex) {
                 Logger.getLogger(TableRenderer.class.getName()).log(Level.SEVERE, null, ex);
             }
             
@@ -65,7 +65,7 @@ public class TableRenderer extends JTextPane implements TableCellRenderer
                         doc.insertString(doc.getLength(), str.substring(0, str.indexOf(" ")), style);
                 
                     for(int x = 0; x < events.size(); x++) {
-                        if(sub.equals(events.get(x).getEventName())) {
+                        if(sub.contains(events.get(x).getEventName())) {
                             switch((events.get(x).getColor().toUpperCase()).replaceAll("\\s","")) {
                                 case "RED":
                                     StyleConstants.setForeground(style, Color.red);
