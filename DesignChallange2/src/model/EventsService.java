@@ -46,7 +46,7 @@ public class EventsService {
         Connection cnt = connection.getConnection();
 
         //create string query
-        String query = "SELECT * FROM " + EventsObject.TABLE + " ORDER BY " + EventsObject.COL_DATE;
+        String query = "SELECT * FROM " + EventsObject.TABLE + " ORDER BY " + EventsObject.COL_DATE + ", " + EventsObject.COL_STARTHOUR + ", " + EventsObject.COL_STARTMIN;
         try {
             //create prepared statement
             PreparedStatement ps = cnt.prepareStatement(query);
