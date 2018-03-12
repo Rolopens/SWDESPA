@@ -111,4 +111,34 @@ public class EventsService {
         }
 
     }
+
+    public void removeUser(String eventName) {
+        //get connection
+        Connection cnt = connection.getConnection();
+
+        //create query
+        String query = "DELETE FROM " + EventsObject.TABLE + " WHERE eventName = ?";
+
+        try {
+            //create prepared statement
+            PreparedStatement ps = cnt.prepareStatement(query);
+
+            //prepare the values
+            ps.setString(1, eventName);
+
+            //execute the update
+            ps.executeUpdate();
+
+            //close resources
+            ps.close();
+            cnt.close();
+
+            System.out.println("[UserS] DELETE SUCCESS :3!");
+        } catch (SQLException ex) {
+            // TODO Auto-generated catch block
+            System.out.println("[UserS] DELETE FAILED! :(");
+            ex.printStackTrace();
+        }
+
+    }
 }

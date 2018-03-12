@@ -46,4 +46,10 @@ public class CalendarController {
         passData();
         
     }
+    
+    public void removeData(String eventName){
+        model.removeUser(eventName);
+        passData();
+        
+    }
 }

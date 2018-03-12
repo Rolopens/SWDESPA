@@ -53,11 +53,18 @@ public class CalendarProgram {
     public JFrame activityFrame;
     public JPanel activityPanel;
     
+    /**
+     * ** Agenda table components **
+     */
     public JScrollPane scrollAgendaTable;
     public JTable agendaTable;
     public DefaultTableModel modelAgendaTable;
     public JFrame agendaFrame;
     public JPanel agendaPanel;
+    
+    public JPanel buttonsPanel;
+    public JButton removeEvent;
+    public JButton markDone;
     
     public JTabbedPane tabbedPane;
 
@@ -118,7 +125,7 @@ public class CalendarProgram {
         
         
         
-        String[] activityHeaders = {"Time", "Activity"};
+        String[] activityHeaders = {"Time", "Activity", "Select"};
         modelActivityTable = new DefaultTableModel() {
             @Override
             public String getColumnName(int index) {
@@ -158,13 +165,33 @@ public class CalendarProgram {
         // pane.add(activityPanel);
         // scrollActivityTable = new JScrollPane(activityTable);
         
-        modelAgendaTable = new DefaultTableModel(activityHeaders, 0);
-        agendaTable = new JTable(modelAgendaTable);
+        modelAgendaTable = new DefaultTableModel(activityHeaders, 0) {
+            @Override
+            public Class getColumnClass(int column) {
+              return (getValueAt(0, column).getClass());
+            }
+        };
+        agendaTable = new JTable(modelAgendaTable) {
+            @Override
+            public boolean isCellEditable(int rowIndex, int mColIndex) {
+                return (mColIndex == 2);
+            }
+        };
         
         agendaPanel = new JPanel();
         agendaPanel.setVisible(true);
         scrollAgendaTable = new JScrollPane(agendaTable);
         agendaPanel.add(scrollAgendaTable);
+          
+        removeEvent = new JButton("Remove");
+        markDone = new JButton("Mark done");
+        removeEvent.addActionListener(new btn_removeEvent());
+        markDone.addActionListener(new btn_markDone());
+        buttonsPanel = new JPanel();
+        buttonsPanel.setVisible(true);      
+        buttonsPanel.add(removeEvent);
+        buttonsPanel.add(markDone);
+        agendaPanel.add(buttonsPanel);
         
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.setBounds(660, 20, 600, 650);
@@ -237,7 +264,7 @@ public class CalendarProgram {
                             String endTime = Integer.toString(events.get(k).getEndHour()) + ":" + endMin;                            
                             String duration = startTime + " - " + endTime;
                             
-                            Object[] rowData = {duration, events.get(k).getEventName()};
+                            Object[] rowData = {duration, events.get(k).getEventName(), Boolean.FALSE};
                             modelAgendaTable.addRow(rowData);
                             
                             boolean color = false;
@@ -400,13 +427,13 @@ public class CalendarProgram {
             //System.out.println(events.size());
             for (int k = 0; k < events.size(); k++) {
                 if (((Integer.parseInt(events.get(k).getDate().split("-")[1]) - 1 == month) && (Integer.parseInt(events.get(k).getDate().split("-")[0])) == year) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) == i)) {
-                    modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);
-                } 
+                    modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);                
                 /*
                 else if ((events.get(k).isIsHoliday()) && (events.get(k).getMonth() - 1 == month) && (events.get(k).getYear() <= year) && (events.get(k).getDate() == i)) {
                     modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);
                 }
                 */
+            }
             }
         }
 
@@ -435,6 +462,24 @@ public class CalendarProgram {
         }
 
         return verdict;
+    }
+        
+    class btn_markDone implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+        }
+    }
+    
+    class btn_removeEvent implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            for(int i = 0; i < agendaTable.getRowCount(); i++) {
+                if((Boolean)(agendaTable.getValueAt(i, 2)) == true) {
+                    controller.removeData(String.valueOf(agendaTable.getValueAt(i, 1)));
+                }
+            }
+        }
     }
     
     class btn_addEvent implements ActionListener{
