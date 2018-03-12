@@ -81,6 +81,10 @@ public class TableRenderer extends JTextPane implements TableCellRenderer
                                     StyleConstants.setForeground(style, Color.GREEN);
                                     setForeground(Color.green);
                                     break;
+                                case "GRAY":
+                                    StyleConstants.setForeground(style, Color.BLACK);
+                                    setForeground(Color.BLACK);
+                                    break;
                                 default:
                                     setForeground(Color.black);
                             }
