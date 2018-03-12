@@ -38,7 +38,9 @@ public class TableRenderer extends JTextPane implements TableCellRenderer
             StyledDocument doc = this.getStyledDocument();
             Style style = this.addStyle("test", null);
             StyleConstants.setForeground(style, Color.black);
-            
+            if (column == 0) {
+            setBackground(Color.WHITE);
+            }
             // super.getTableCellRendererComponent(table, value, selected, focused, row, column);
             if (column == 0 || column == 6)
                     setBackground(new Color(220,220,255));

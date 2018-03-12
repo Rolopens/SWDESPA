@@ -46,7 +46,7 @@ public class EventsService {
         Connection cnt = connection.getConnection();
 
         //create string query
-        String query = "SELECT * FROM " + EventsObject.TABLE + " ORDER BY " + EventsObject.COL_DATE + ", " + EventsObject.COL_STARTHOUR + ", " + EventsObject.COL_STARTMIN;
+        String query = "SELECT * FROM " + EventsObject.TABLE + " ORDER BY " + EventsObject.COL_DATE + " ASC, " + EventsObject.COL_STARTHOUR + " ASC, " +EventsObject.COL_STARTMIN + " ASC";
         try {
             //create prepared statement
             PreparedStatement ps = cnt.prepareStatement(query);
@@ -68,7 +68,6 @@ public class EventsService {
             System.out.println("[UserS] SELECT FAILED!");
             e.printStackTrace();
         }
-
         return events;
     }
 
@@ -140,5 +139,40 @@ public class EventsService {
             ex.printStackTrace();
         }
 
+    }
+    
+    public void updateUser(String e, int val, String color){
+        //get connection
+		Connection cnt = connection.getConnection();
+		
+		//create query
+		String query = "UPDATE " + EventsObject.TABLE +
+				" SET "
+				+ EventsObject.COL_TYPE + " = ?, " 
+                                + EventsObject.COL_COLOR + " = ? " +
+				" WHERE " + EventsObject.COL_EVENTNAME + " = ?";
+		
+		try {
+			//create prepared statement
+			PreparedStatement ps = cnt.prepareStatement(query);
+                        
+			//prepare the values
+			ps.setInt(1, val);
+			ps.setString(2, color);
+                        ps.setString(3, e);
+			
+			//execute the update
+			ps.executeUpdate();
+			
+			//close resources
+			ps.close();
+			cnt.close();
+	
+			System.out.println("[UserS] UPDATION SUCCESS :3!");
+		} catch (SQLException ex) {
+			// TODO Auto-generated catch block
+			System.out.println("[UserS] UPDATION FAILED! :(");
+			ex.printStackTrace();
+		}
     }
 }

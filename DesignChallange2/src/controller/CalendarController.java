@@ -52,4 +52,9 @@ public class CalendarController {
         passData();
         
     }
+    
+    public void updateData(String eventName, int val, String color){
+        model.updateUser(eventName, val, color);
+        passData();
+    }
 }
