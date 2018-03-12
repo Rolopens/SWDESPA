@@ -67,6 +67,8 @@ public class CalendarProgram {
     public JButton markDone;
     
     public JTabbedPane tabbedPane;
+    
+    public JButton refreshSimulate;
 
     // List of events
     private ArrayList<EventsObject> events = new ArrayList<EventsObject>();
@@ -241,6 +243,61 @@ public class CalendarProgram {
                     int col = calendarTable.getSelectedColumn();  
                     int row = calendarTable.getSelectedRow();
                     dateArea.setText(yearToday + "-" + (monthToday+1) +"-"+ modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
+                    
+                    modelAgendaTable.setNumRows(0);
+                    
+                    for (int k = 0; k < 44; k++)
+                        modelActivityTable.setValueAt(null, k, 1);
+                    
+                    for (int k = 0; k < events.size(); k++) {
+                        if (((Integer.parseInt(events.get(k).getDate().split("-")[1]) - 1 == monthToday) && (Integer.parseInt(events.get(k).getDate().split("-")[0]) == yearToday) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) == (Integer.valueOf(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]))))) {                            
+                            String startMin;
+                            String endMin;
+                            if(events.get(k).getStartMin() == 0)
+                                startMin = "00";
+                            else
+                                startMin = Integer.toString(events.get(k).getStartMin());
+                            if(events.get(k).getEndMin() == 0)
+                                endMin = "00";
+                            else
+                                endMin = Integer.toString(events.get(k).getEndMin());
+                            
+                            String startTime = Integer.toString(events.get(k).getStartHour()) + ":" + startMin;
+                            String endTime = Integer.toString(events.get(k).getEndHour()) + ":" + endMin;                            
+                            String duration = startTime + " - " + endTime;
+                            
+                            Object[] rowData = {duration, events.get(k).getEventName(), Boolean.FALSE};
+                            modelAgendaTable.addRow(rowData);
+                            
+                            boolean color = false;
+                            for(int l = 0; l < 48; l++) {
+                                    if(modelActivityTable.getValueAt(l, 0).equals(endTime)) {             
+                                        color = false;
+                                    }
+                                    if(modelActivityTable.getValueAt(l, 0).equals(startTime)) {                                        
+                                        modelActivityTable.setValueAt(events.get(k).getEventName(), l, 1);
+                                        color = true;
+                                    }
+                            }
+                        }
+                    }
+                }
+                catch (NullPointerException e){
+                    e.printStackTrace();
+                }
+                //System.out.println(monthToday+1);
+                //System.out.println(yearToday);
+            }
+        });
+        
+        refreshSimulate = new JButton();
+        refreshSimulate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    System.out.println("yes");
+                    int col = calendarTable.getSelectedColumn();  
+                    int row = calendarTable.getSelectedRow();
                     
                     modelAgendaTable.setNumRows(0);
                     
@@ -506,6 +563,7 @@ public class CalendarProgram {
                     controller.removeData(String.valueOf(agendaTable.getValueAt(i, 1)));
                 }
             }
+            refreshSimulate.doClick();
         }
     }
     
@@ -559,6 +617,7 @@ public class CalendarProgram {
             }
             if (safe == true){
                 controller.addData(temp);
+                refreshSimulate.doClick();
             }
         }
     }
