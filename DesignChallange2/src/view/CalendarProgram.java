@@ -443,13 +443,16 @@ public class CalendarProgram {
     
     public boolean isConflicting(EventsObject e) {
         boolean verdict = false;
+        int startTemp, endTemp;
+        startTemp = (e.getStartHour() * 100 + e.getStartMin());
+        endTemp = (e.getEndHour() * 100 + e.getEndMin());
         for (int i = 0; i < events.size(); i++) {
             if (e.getEventName().equals(events.get(i).getEventName())) {
                 verdict = true;
             }
+            
             if (events.get(i).getDate().equals(e.getDate())) {
-                int startTemp = (e.getStartHour() * 100 + e.getStartMin());
-                int endTemp = (e.getEndHour() * 100 + e.getEndMin());
+
                 if (startTemp >= (events.get(i).getStartHour() * 100 + events.get(i).getStartMin())
                         && startTemp < (events.get(i).getEndHour() * 100 + events.get(i).getEndMin())) {
                     verdict = true;
@@ -458,7 +461,31 @@ public class CalendarProgram {
                         && endTemp <= (events.get(i).getEndHour() * 100 + events.get(i).getEndMin())) {
                     verdict = true;
                 }
+                /*
+                System.out.println(startTemp);
+                System.out.println(endTemp);
+                System.out.println(events.get(i).getStartHour() * 100 + events.get(i).getStartMin());
+                System.out.println(events.get(i).getEndHour() * 100 + events.get(i).getEndMin());
+                */
+                if (startTemp == (events.get(i).getStartHour() * 100 + events.get(i).getStartMin())
+                        && endTemp == (events.get(i).getEndHour() * 100 + events.get(i).getEndMin())) {
+                    verdict = true;
+                }
+                
+                if (startTemp < (events.get(i).getStartHour() * 100 + events.get(i).getStartMin())
+                        && endTemp > (events.get(i).getStartHour() * 100 + events.get(i).getStartMin())) {
+                    verdict = true;
+                }
+                if (startTemp < (events.get(i).getEndHour() * 100 + events.get(i).getEndMin())
+                        && endTemp > (events.get(i).getEndHour() * 100 + events.get(i).getEndMin())) {
+                    verdict = true;
+                }
             }
+
+        }
+        
+        if (startTemp >= endTemp) {
+            verdict = true;
         }
 
         return verdict;
@@ -503,21 +530,20 @@ public class CalendarProgram {
                 temp.setColor("Green");
             }
             
-            if ( (Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]) <= Integer.parseInt(endTime.getSelectedItem().toString().split(":")[0]))  &&
-                    (Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]) < Integer.parseInt(endTime.getSelectedItem().toString().split(":")[1])) &&
-                        temp.getType() == 0){
+            if (temp.getType() == 0) {
                 temp.setStartHour(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]));
                 temp.setStartMin(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]));
                 temp.setEndHour(Integer.parseInt(endTime.getSelectedItem().toString().split(":")[0]));
                 temp.setEndMin(Integer.parseInt(endTime.getSelectedItem().toString().split(":")[1]));
-            }
-            else if (temp.getType() == 1){
+            } else if (temp.getType() == 1) {
                 temp.setStartHour(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]));
                 temp.setStartMin(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]));
-                temp.setEndHour(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]) + 1);
+                temp.setEndHour(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]));
                 temp.setEndMin(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[1]) + 30);
-                if(temp.getEndMin() == 60)
+                if (temp.getEndMin() == 60) {
+                    temp.setEndHour(Integer.parseInt(startTime.getSelectedItem().toString().split(":")[0]) + 1);
                     temp.setEndMin(0);
+                }
             }
             
             if (!dateArea.getText().equals("")){
