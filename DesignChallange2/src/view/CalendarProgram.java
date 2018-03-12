@@ -171,19 +171,19 @@ public class CalendarProgram {
                     String endTime = Integer.toString(events.get(i).getEndHour()) + ":" + endMin;
 
                     if (getValueAt(row, 1) != null && column == 1 && events.get(i).getColor().equals("Green")) {
-                        for (int a = TimeToRowNumber(startTime); a < TimeToRowNumber(endTime); a++) {
+                        for (int a = converter(startTime); a < converter(endTime); a++) {
                             if (row == a && dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])) {
                                 component.setBackground(Color.GREEN);
                             }
                         }
                     } else if (getValueAt(row, 1) != null && column == 1 && events.get(i).getColor().equals("Blue")) {
-                        for (int a = TimeToRowNumber(startTime); a < TimeToRowNumber(endTime); a++) {
+                        for (int a = converter(startTime); a < converter(endTime); a++) {
                             if (row == a && dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])) {
                                 component.setBackground(Color.BLUE);
                             }
                         }
                     }else if (getValueAt(row, 1) != null && column == 1 && events.get(i).getColor().equals("Gray")) {
-                        for (int a = TimeToRowNumber(startTime); a < TimeToRowNumber(endTime); a++) {
+                        for (int a = converter(startTime); a < converter(endTime); a++) {
                             if (row == a && dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])) {
                                 component.setBackground(Color.GRAY);
                             }
@@ -357,8 +357,8 @@ public class CalendarProgram {
                                     color = false;
                                 }
                                 if (modelActivityTable.getValueAt(l, 0).equals(startTime)) {
-                                    System.out.println(TimeToRowNumber(endTime));
-                                    for (int a = l; a < TimeToRowNumber(endTime); a++) {
+                                    System.out.println(converter(endTime));
+                                    for (int a = l; a < converter(endTime); a++) {
                                         modelActivityTable.setValueAt(events.get(k).getEventName(), a, 1);
                                     }
 
@@ -416,7 +416,7 @@ public class CalendarProgram {
                                         color = false;
                                     }
                                     if(modelActivityTable.getValueAt(l, 0).equals(startTime)) {                                        
-                                        for (int a = l; a < TimeToRowNumber(endTime); a++) {
+                                        for (int a = l; a < converter(endTime); a++) {
                                         modelActivityTable.setValueAt(events.get(k).getEventName(), a, 1);
                                     }
                                         color = true;
@@ -635,7 +635,7 @@ public class CalendarProgram {
         return verdict;
     }
 
-    private int TimeToRowNumber(String time) {
+    private int converter(String time) {
 
         switch (time) {
 
@@ -790,13 +790,19 @@ public class CalendarProgram {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-           
+            boolean Error = false;
             for (int i = 0; i < agendaTable.getRowCount(); i++) {
                 if ((Boolean) (agendaTable.getValueAt(i, 2)) == true) {
                     for (int j = 0; j < events.size(); j++)
                         if(events.get(j).getEventName().equals(agendaTable.getValueAt(i, 1)) && events.get(j).getType() == 1)
-                    controller.updateData(String.valueOf(agendaTable.getValueAt(i, 1)) , 2 ,"Gray");
+                            controller.updateData(String.valueOf(agendaTable.getValueAt(i, 1)) , 2 ,"Gray");
+                        else
+                            Error = true;
+                            
                 }
+            }
+            if (Error == true){
+                JOptionPane.showMessageDialog(new Frame(), "Cannot Mark Event as Done / Completed Event as Done", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
 
             refreshSimulate.doClick();
@@ -867,6 +873,8 @@ public class CalendarProgram {
                 controller.addData(temp);
                 refreshSimulate.doClick();
             }
+            else
+                JOptionPane.showMessageDialog(new Frame(), "Invalid Date Credentials", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 

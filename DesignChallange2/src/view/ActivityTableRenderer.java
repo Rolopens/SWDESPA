@@ -32,7 +32,7 @@ public class ActivityTableRenderer extends JTextPane implements TableCellRendere
         this.view = view;
     } 
     
-    private int TimeToRowNumber(String time) {
+    private int converter(String time) {
 
         switch (time) {
 
@@ -206,12 +206,12 @@ public class ActivityTableRenderer extends JTextPane implements TableCellRendere
                 
                 for (int i = 0; i < events.size(); i++) {
                     if (events.get(i).getColor().equals("Green")) {
-                        for (int a = TimeToRowNumber(events.get(i).getStartHour() +":"+events.get(i).getStartMin()); a < TimeToRowNumber(events.get(i).getEndHour() +":"+events.get(i).getEndMin()); a++)
+                        for (int a = converter(events.get(i).getStartHour() +":"+events.get(i).getStartMin()); a < converter(events.get(i).getEndHour() +":"+events.get(i).getEndMin()); a++)
                             if ( row == a && view.dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2]))
                                 setBackground(Color.GREEN);
                          
                     } else if (events.get(i).getColor().equals("Blue")) {
-                        for (int a = TimeToRowNumber(events.get(i).getStartHour() +":"+events.get(i).getStartMin()); a < TimeToRowNumber(events.get(i).getEndHour() +":"+events.get(i).getEndMin()); a++)
+                        for (int a = converter(events.get(i).getStartHour() +":"+events.get(i).getStartMin()); a < converter(events.get(i).getEndHour() +":"+events.get(i).getEndMin()); a++)
                             if ( row == a && view.dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])){
                                 setBackground(Color.BLUE);
                                 System.out.println(a);
