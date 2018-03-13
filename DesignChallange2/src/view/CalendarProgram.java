@@ -10,8 +10,10 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import model.EventsObject;
+import model.EventsService;
 
 public class CalendarProgram {
 
@@ -68,12 +70,17 @@ public class CalendarProgram {
     public JButton removeEvent;
     public JButton markDone;
 
+    public JRadioButton filterNone;
+    public JRadioButton filterOnlyEvents;
+    public JRadioButton filterOnlyToDo;
+
     public JTabbedPane tabbedPane;
 
     public JButton refreshSimulate;
     // List of events
     private ArrayList<EventsObject> events = new ArrayList<EventsObject>();
     private CalendarController controller;
+    private EventsService model;
 
     public CalendarController getController() {
         return controller;
@@ -169,24 +176,29 @@ public class CalendarProgram {
 
                     String startTime = Integer.toString(events.get(i).getStartHour()) + ":" + startMin;
                     String endTime = Integer.toString(events.get(i).getEndHour()) + ":" + endMin;
-
+                    if (getValueAt(row, 1) != null && column == 1)
+                        System.out.println(events.get(i).toString());
                     if (getValueAt(row, 1) != null && column == 1 && events.get(i).getColor().equals("Green")) {
+                        System.out.println(startTime);
                         for (int a = converter(startTime); a < converter(endTime); a++) {
+                            System.out.println(row + " //// "+ a + " ///// " + dateArea.getText() + " /////// "+ events.get(i).getDate());
                             if (row == a && dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])) {
+                                System.out.println("?");
                                 component.setBackground(Color.GREEN);
-                            }
+                                
+                             }
                         }
                     } else if (getValueAt(row, 1) != null && column == 1 && events.get(i).getColor().equals("Blue")) {
-                        
+
                         for (int a = converter(startTime); a < converter(endTime); a++) {
-                            if (row == a && dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])) {
+                           if (row == a && dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])) {
                                 component.setBackground(Color.BLUE);
                             }
                         }
-                        
+
                     } else if (getValueAt(row, 1) != null && column == 1 && events.get(i).getColor().equals("Gray")) {
                         for (int a = converter(startTime); a < converter(endTime); a++) {
-                            if (row == a && dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])) {
+                           if (row == a && dateArea.getText().split("-")[2].equals(events.get(i).getDate().split("-")[2])) {
                                 component.setBackground(Color.GRAY);
                             }
                         }
@@ -231,17 +243,15 @@ public class CalendarProgram {
                 Component component = super.prepareRenderer(renderer, row, column);
                 component.setForeground(Color.BLACK);
                 if (column == 1) {
-                    for (int i = 0; i < events.size(); i++){
-                        if (String.valueOf(agendaTable.getValueAt(row, 1)).equals(events.get(i).getEventName())){
+                    for (int i = 0; i < events.size(); i++) {
+                        if (String.valueOf(agendaTable.getValueAt(row, 1)).equals(events.get(i).getEventName())) {
                             if (events.get(i).getColor().equals("Green")) {
-                                    component.setForeground(Color.GREEN);
-                                }
-                                else if (events.get(i).getColor().equals("Blue")) {
-                                    component.setForeground(Color.BLUE);
-                                }
-                                else if (events.get(i).getColor().equals("Gray")) {
-                                    component.setForeground(Color.GRAY);
-                                }
+                                component.setForeground(Color.GREEN);
+                            } else if (events.get(i).getColor().equals("Blue")) {
+                                component.setForeground(Color.BLUE);
+                            } else if (events.get(i).getColor().equals("Gray")) {
+                                component.setForeground(Color.GRAY);
+                            }
                         }
                     }
                 }
@@ -254,6 +264,18 @@ public class CalendarProgram {
                 return (mColIndex == 2);
             }
         };
+
+        filterNone = new JRadioButton("All");
+        filterOnlyEvents = new JRadioButton("Events");
+        filterOnlyToDo = new JRadioButton("To do");
+        ButtonGroup bg1 = new ButtonGroup();
+        bg1.add(filterNone);
+        bg1.add(filterOnlyEvents);
+        bg1.add(filterOnlyToDo);
+
+        filterNone.addActionListener(new btn_filterNone());
+        filterOnlyEvents.addActionListener(new btn_filterOnlyEvents());
+        filterOnlyToDo.addActionListener(new btn_filterOnlyToDo());
 
         agendaPanel = new JPanel();
         agendaPanel.setLayout(new BorderLayout());
@@ -269,6 +291,10 @@ public class CalendarProgram {
         buttonsPanel.setVisible(true);
         buttonsPanel.add(removeEvent);
         buttonsPanel.add(markDone);
+        buttonsPanel.add(filterNone);
+        buttonsPanel.add(filterOnlyEvents);
+        buttonsPanel.add(filterOnlyToDo);
+
         agendaPanel.add(buttonsPanel, BorderLayout.SOUTH);
 
         JTabbedPane tabbedPane = new JTabbedPane();
@@ -311,6 +337,189 @@ public class CalendarProgram {
             }
         };
 
+        refreshSimulate = new JButton("All");
+        refreshSimulate.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    int col = calendarTable.getSelectedColumn();
+                    int row = calendarTable.getSelectedRow();
+                    ArrayList<EventsObject> eventsFiltered = new ArrayList<EventsObject>();
+
+                    modelAgendaTable.setNumRows(0);
+
+                    for (int k = 0; k < 44; k++) {
+                        modelActivityTable.setValueAt(null, k, 1);
+                    }
+
+                    for (int k = 0; k < events.size(); k++) {
+
+                        if (refreshSimulate.getText().equals("Events")) {
+
+                            SimpleDateFormat sdf = new SimpleDateFormat("HH:MM");
+                            SimpleDateFormat sdf2 = new SimpleDateFormat("MM dd yyy");
+
+                            int curTime = Integer.valueOf(sdf.format(new Date()).replace(":", ""));
+
+                            int curYear = Integer.valueOf(sdf2.format(new Date()).split(" ")[2]);
+                            int curMonth = Integer.valueOf(sdf2.format(new Date()).split(" ")[0]);
+                            int curDay = Integer.valueOf(sdf2.format(new Date()).split(" ")[1]);
+
+                            int endTime = (events.get(k).getEndHour() * 100) + events.get(k).getEndMin();
+
+                            System.out.println(events.get(k).getEventName());
+                            System.out.println(curYear);
+                            System.out.println((Integer.parseInt(events.get(k).getDate().split("-")[0]) == curYear));
+                            System.out.println(Integer.parseInt(events.get(k).getDate().split("-")[0]));
+                            System.out.println(curMonth);
+                            System.out.println(Integer.parseInt(events.get(k).getDate().split("-")[1]) == curMonth);
+                            System.out.println(Integer.parseInt(events.get(k).getDate().split("-")[1]));
+                            System.out.println(curDay);
+                            System.out.println(Integer.parseInt(events.get(k).getDate().split("-")[2]) == curDay);
+                            System.out.println(Integer.parseInt(events.get(k).getDate().split("-")[2]));
+                            System.out.println(endTime);
+                            System.out.println(curTime);
+                            System.out.println(endTime >= curTime);
+
+                            if ((Integer.parseInt(events.get(k).getDate().split("-")[0]) >= curYear) && (Integer.parseInt(events.get(k).getDate().split("-")[1]) >= curMonth) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) >= curDay)) {
+                                if ((Integer.parseInt(events.get(k).getDate().split("-")[0]) == curYear) && Integer.parseInt(events.get(k).getDate().split("-")[1]) == curMonth
+                                        && Integer.parseInt(events.get(k).getDate().split("-")[2]) == curDay && events.get(k).getType() == 0) {
+                                    if (endTime >= curTime) {
+                                        eventsFiltered.add(events.get(k));
+                                    }
+                                } else if (events.get(k).getType() == 0) {
+                                    eventsFiltered.add(events.get(k));
+                                }
+                            }
+
+                        } else if (refreshSimulate.getText().equals("To Do")) {
+                            if (events.get(k).getType() == 1 || events.get(k).getType() == 2) {
+                                eventsFiltered.add(events.get(k));
+                            }
+                        } else {
+                            if (events.get(k).getType() == 0) {
+
+                                SimpleDateFormat sdf = new SimpleDateFormat("HH:MM");
+                                SimpleDateFormat sdf2 = new SimpleDateFormat("MM dd yyy");
+
+                                int curTime = Integer.valueOf(sdf.format(new Date()).replace(":", ""));
+
+                                int curYear = Integer.valueOf(sdf2.format(new Date()).split(" ")[2]);
+                                int curMonth = Integer.valueOf(sdf2.format(new Date()).split(" ")[0]);
+                                int curDay = Integer.valueOf(sdf2.format(new Date()).split(" ")[1]);
+
+                                int endTime = (events.get(k).getEndHour() * 100) + events.get(k).getEndMin();
+                                /*
+                                System.out.println(curTime);
+                                System.out.println(curMonth);
+                                System.out.println(curDay);
+                                System.out.println(endTime);
+                                 */
+/*
+                                if ((Integer.parseInt(events.get(k).getDate().split("-")[0]) >= curYear)) {
+                                    if ((Integer.parseInt(events.get(k).getDate().split("-")[0]) > curYear)) {
+                                        eventsFiltered.add(events.get(k));
+                                    } else {
+                                        if ((Integer.parseInt(events.get(k).getDate().split("-")[1]) >= curMonth)) {
+                                            if ((Integer.parseInt(events.get(k).getDate().split("-")[1]) > curMonth)) {
+                                                eventsFiltered.add(events.get(k));
+                                            } else {
+                                                if ((Integer.parseInt(events.get(k).getDate().split("-")[2]) >= curDay)) {
+                                                    if ((Integer.parseInt(events.get(k).getDate().split("-")[2]) > curDay)) {
+                                                        eventsFiltered.add(events.get(k));
+                                                    } else {
+                                                        if (endTime >= curTime){
+                                                            if(endTime > curTime){
+                                                                eventsFiltered.add(events.get(k));
+                                                            }
+                                
+                                                        }
+
+                                                    }
+                                                }
+                                            }
+
+                                        }
+                                    }
+                                }
+*/
+                                if ((Integer.parseInt(events.get(k).getDate().split("-")[0]) >= curYear) && (Integer.parseInt(events.get(k).getDate().split("-")[1]) >= curMonth) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) >= curDay)) {
+                                    if ((Integer.parseInt(events.get(k).getDate().split("-")[0]) == curYear) && Integer.parseInt(events.get(k).getDate().split("-")[1]) == curMonth
+                                            && Integer.parseInt(events.get(k).getDate().split("-")[2]) == curDay && events.get(k).getType() == 0) {
+                                        if (endTime >= curTime) {
+                                            eventsFiltered.add(events.get(k));
+                                        }
+                                    } else if (events.get(k).getType() == 0) {
+                                        eventsFiltered.add(events.get(k));
+                                    }
+                                }
+
+                            } else {
+                                eventsFiltered.add(events.get(k));
+                            }
+                        }
+                    }
+
+                    for (int k = 0; k < events.size(); k++) {
+                        if (((Integer.parseInt(events.get(k).getDate().split("-")[1]) - 1 == monthToday) && (Integer.parseInt(events.get(k).getDate().split("-")[0]) == yearToday) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) == (Integer.valueOf(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]))))) {
+                            String startMin;
+                            String endMin;
+                            if (events.get(k).getStartMin() == 0) {
+                                startMin = "00";
+                            } else {
+                                startMin = Integer.toString(events.get(k).getStartMin());
+                            }
+                            if (events.get(k).getEndMin() == 0) {
+                                endMin = "00";
+                            } else {
+                                endMin = Integer.toString(events.get(k).getEndMin());
+                            }
+
+                            String startTime = Integer.toString(events.get(k).getStartHour()) + ":" + startMin;
+                            String endTime = Integer.toString(events.get(k).getEndHour()) + ":" + endMin;
+                            String duration = startTime + " - " + endTime;
+
+                            for (int l = 0; l < 48; l++) {
+                                if (modelActivityTable.getValueAt(l, 0).equals(startTime)) {
+                                    for (int a = l; a < converter(endTime); a++) {
+                                        modelActivityTable.setValueAt(events.get(k).getEventName(), a, 1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    for (int k = 0; k < eventsFiltered.size(); k++) {
+                        if (((Integer.parseInt(eventsFiltered.get(k).getDate().split("-")[1]) - 1 == monthToday) && (Integer.parseInt(eventsFiltered.get(k).getDate().split("-")[0]) == yearToday) && (Integer.parseInt(eventsFiltered.get(k).getDate().split("-")[2]) == (Integer.valueOf(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]))))) {
+                            String startMin;
+                            String endMin;
+                            if (eventsFiltered.get(k).getStartMin() == 0) {
+                                startMin = "00";
+                            } else {
+                                startMin = Integer.toString(eventsFiltered.get(k).getStartMin());
+                            }
+                            if (eventsFiltered.get(k).getEndMin() == 0) {
+                                endMin = "00";
+                            } else {
+                                endMin = Integer.toString(eventsFiltered.get(k).getEndMin());
+                            }
+
+                            String startTime = Integer.toString(eventsFiltered.get(k).getStartHour()) + ":" + startMin;
+                            String endTime = Integer.toString(eventsFiltered.get(k).getEndHour()) + ":" + endMin;
+                            String duration = startTime + " - " + endTime;
+
+                            Object[] rowData = {duration, eventsFiltered.get(k).getEventName(), Boolean.FALSE};
+                            modelAgendaTable.addRow(rowData);
+                        }
+                    }
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //refreshCalendar( Calenda, yearBound)
+        });
+
         calendarTable = new JTable(modelCalendarTable);
         calendarTable.addMouseListener(new MouseAdapter() {
             @Override
@@ -318,11 +527,27 @@ public class CalendarProgram {
                 try {
                     int col = calendarTable.getSelectedColumn();
                     int row = calendarTable.getSelectedRow();
-                    if (monthToday < 9) {
+                    if (monthToday < 9 && Integer.parseInt(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]) < 10) {
+                        dateArea.setText(yearToday + "-0" + (monthToday + 1) + "-0" + modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
+                    } 
+                    else if(monthToday < 9 && Integer.parseInt(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]) > 10){
                         dateArea.setText(yearToday + "-0" + (monthToday + 1) + "-" + modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
-                    } else {
-                        dateArea.setText(yearToday + "-" + (monthToday + 1) + "-" + modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
                     }
+                    else if(monthToday > 9 && Integer.parseInt(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]) < 10){
+                        dateArea.setText(yearToday + "-" + (monthToday + 1) + "-0" + modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
+                    }
+                    else
+                        dateArea.setText(yearToday + "-" + (monthToday + 1) + "-0" + modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
+                    
+                    
+                    /*
+                    {
+                        if (Integer.parseInt(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]) < 10)
+                            dateArea.setText(yearToday + "-" + (monthToday + 1) + "-0" + modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
+                        else 
+                            dateArea.setText(yearToday + "-" + (monthToday + 1) + "-" + modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]);
+                    }
+                    */
                     modelAgendaTable.setNumRows(0);
 
                     for (int k = 0; k < 44; k++) {
@@ -369,64 +594,7 @@ public class CalendarProgram {
                 } catch (NullPointerException e) {
                     e.printStackTrace();
                 }
-
-                
-            }
-        });
-
-        refreshSimulate = new JButton();
-        refreshSimulate.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent evt) {
-                try {
-                    int col = calendarTable.getSelectedColumn();
-                    int row = calendarTable.getSelectedRow();
-
-                    modelAgendaTable.setNumRows(0);
-
-                    for (int k = 0; k < 44; k++) {
-                        modelActivityTable.setValueAt(null, k, 1);
-                    }
-
-                    for (int k = 0; k < events.size(); k++) {
-                        if (((Integer.parseInt(events.get(k).getDate().split("-")[1]) - 1 == monthToday) && (Integer.parseInt(events.get(k).getDate().split("-")[0]) == yearToday) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) == (Integer.valueOf(modelCalendarTable.getValueAt(row, col).toString().split(" ")[0]))))) {
-                            String startMin;
-                            String endMin;
-                            if (events.get(k).getStartMin() == 0) {
-                                startMin = "00";
-                            } else {
-                                startMin = Integer.toString(events.get(k).getStartMin());
-                            }
-                            if (events.get(k).getEndMin() == 0) {
-                                endMin = "00";
-                            } else {
-                                endMin = Integer.toString(events.get(k).getEndMin());
-                            }
-
-                            String startTime = Integer.toString(events.get(k).getStartHour()) + ":" + startMin;
-                            String endTime = Integer.toString(events.get(k).getEndHour()) + ":" + endMin;
-                            String duration = startTime + " - " + endTime;
-
-                            Object[] rowData = {duration, events.get(k).getEventName(), Boolean.FALSE};
-                            modelAgendaTable.addRow(rowData);
-
-                            boolean color = false;
-                            for (int l = 0; l < 48; l++) {
-                                if (modelActivityTable.getValueAt(l, 0).equals(endTime)) {
-                                    color = false;
-                                }
-                                if (modelActivityTable.getValueAt(l, 0).equals(startTime)) {
-                                    for (int a = l; a < converter(endTime); a++) {
-                                        modelActivityTable.setValueAt(events.get(k).getEventName(), a, 1);
-                                    }
-                                    color = true;
-                                }
-                            }
-                        }
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
+                refreshSimulate.doClick();
             }
         });
 
@@ -508,7 +676,7 @@ public class CalendarProgram {
         for (int i = yearBound - 100; i <= yearBound + 100; i++) {
             cmbYear.addItem(String.valueOf(i));
         }
-        
+
         refreshCalendar(monthBound, yearBound); //Refresh calendar
     }
 
@@ -541,17 +709,15 @@ public class CalendarProgram {
         nod = cal.getActualMaximum(GregorianCalendar.DAY_OF_MONTH);
         som = cal.get(GregorianCalendar.DAY_OF_WEEK);
 
-        
         for (i = 1; i <= nod; i++) {
             int row = new Integer((i + som - 2) / 7);
             int column = (i + som - 2) % 7;
             modelCalendarTable.setValueAt(i, row, column);
 
-            
             for (int k = 0; k < events.size(); k++) {
                 if (((Integer.parseInt(events.get(k).getDate().split("-")[1]) - 1 == month) && (Integer.parseInt(events.get(k).getDate().split("-")[0])) == year) && (Integer.parseInt(events.get(k).getDate().split("-")[2]) == i)) {
                     modelCalendarTable.setValueAt(modelCalendarTable.getValueAt(row, column) + " " + events.get(k).getEventName(), row, column);
-                    
+
                 }
             }
         }
@@ -579,7 +745,7 @@ public class CalendarProgram {
                         && endTemp <= (events.get(i).getEndHour() * 100 + events.get(i).getEndMin())) {
                     verdict = true;
                 }
-               
+
                 if (startTemp == (events.get(i).getStartHour() * 100 + events.get(i).getStartMin())
                         && endTemp == (events.get(i).getEndHour() * 100 + events.get(i).getEndMin())) {
                     verdict = true;
@@ -761,8 +927,8 @@ public class CalendarProgram {
         public void actionPerformed(ActionEvent e) {
             boolean Error = false;
             for (int i = 0; i < agendaTable.getRowCount(); i++) {
-                
-                if ((Boolean) (agendaTable.getValueAt(i, 2)) == true) { 
+
+                if ((Boolean) (agendaTable.getValueAt(i, 2)) == true) {
                     for (int j = 0; j < events.size(); j++) {
                         if (events.get(j).getEventName().equals(agendaTable.getValueAt(i, 1)) && events.get(j).getType() == 1) {
                             controller.updateData(String.valueOf(agendaTable.getValueAt(i, 1)), 2, "Gray");
@@ -774,7 +940,7 @@ public class CalendarProgram {
             if (Error == true) {
                 JOptionPane.showMessageDialog(new Frame(), "Cannot Mark Event as Done / Completed Event as Done", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-
+            refreshCalendar(monthToday, yearToday);
             refreshSimulate.doClick();
         }
     }
@@ -788,7 +954,9 @@ public class CalendarProgram {
                     controller.removeData(String.valueOf(agendaTable.getValueAt(i, 1)));
                 }
             }
+            refreshCalendar(monthToday, yearToday);
             refreshSimulate.doClick();
+
         }
     }
 
@@ -841,6 +1009,7 @@ public class CalendarProgram {
             }
             if (safe == true) {
                 controller.addData(temp);
+                refreshCalendar(monthToday, yearToday);
                 refreshSimulate.doClick();
             } else {
                 JOptionPane.showMessageDialog(new Frame(), "Invalid Date Credentials", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -901,6 +1070,33 @@ public class CalendarProgram {
                 yearToday = Integer.parseInt(b);
                 refreshCalendar(monthToday, yearToday);
             }
+        }
+    }
+
+    class btn_filterNone implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            refreshSimulate.setText("All");
+            refreshSimulate.doClick();
+        }
+    }
+
+    class btn_filterOnlyEvents implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            refreshSimulate.setText("Events");
+            refreshSimulate.doClick();
+        }
+    }
+
+    class btn_filterOnlyToDo implements ActionListener {
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            refreshSimulate.setText("To Do");
+            refreshSimulate.doClick();
         }
     }
 }
